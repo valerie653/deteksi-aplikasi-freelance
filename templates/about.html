@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tentang Aplikasi - Deteksi Lowongan</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f172a; 
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: linear-gradient(135deg, #1e3a5f, #0f172a);
+      padding: 2rem 1rem;
+      text-align: center;
+      border-bottom: 1px solid #1e40af33;
+    }
+    header h1 { 
+      font-size: 2rem; 
+      color: #60a5fa; 
+      margin-bottom: 0.4rem;
+    }
+    header p { color: #94a3b8; font-size: 1.1rem; }
+    
+    .nav-menu {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    .nav-link {
+      color: #94a3b8;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+    .nav-link.active, .nav-link:hover {
+      color: #60a5fa;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #1e40af;
+      color: #93c5fd;
+      font-size: 0.9rem;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      margin-top: 0.8rem;
+    }
+
+    main { 
+      flex: 1; 
+      max-width: 900px; 
+      width: 100%; 
+      margin: 3rem auto; 
+      padding: 0 1.5rem; 
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      color: #60a5fa;
+      font-size: 1.5rem;
+      margin-bottom: 1.2rem;
+      border-bottom: 2px solid #334155;
+      padding-bottom: 0.5rem;
+    }
+
+    p.description {
+      line-height: 1.7;
+      color: #cbd5e1;
+      text-align: justify;
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+    }
+    p.description:last-child { margin-bottom: 0; }
+
+    .quote-box {
+      background: #0f172a;
+      border-left: 4px solid #3b82f6;
+      padding: 1rem;
+      border-radius: 0 8px 8px 0;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin: 1rem 0 1.5rem 0;
+      font-size: 1.05rem;
+    }
+
+    .steps {
+      list-style: none;
+      counter-reset: step;
+      margin-top: 0.5rem;
+    }
+    .steps li {
+      counter-increment: step;
+      position: relative;
+      padding: 0.9rem 0 0.9rem 3rem;
+      border-bottom: 1px solid #334155;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0.75rem;
+      width: 2rem;
+      height: 2rem;
+      background: #1e40af;
+      color: #93c5fd;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .steps li strong { color: #e2e8f0; }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .feature-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 1.2rem;
+    }
+    .feature-item .icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .feature-item h3 {
+      color: #e2e8f0;
+      font-size: 1.05rem;
+      margin-bottom: 0.4rem;
+    }
+    .feature-item p {
+      color: #94a3b8;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+    }
+    .tech-tag {
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #93c5fd;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .disclaimer {
+      background: #2a1a0f;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 0 8px 8px 0;
+      color: #fde68a;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    footer {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.85rem;
+      padding: 1.5rem 1rem 2rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🔍 Deteksi Penipuan Lowongan Kerja</h1>
+  <p>Purwarupa Aplikasi Berbasis Machine Learning</p>
+  <nav class="nav-menu">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/about" class="nav-link active">About</a>
+  </nav>
+  <span class="badge">Tentang Aplikasi & Cara Kerja</span>
+</header>
+
+<main>
+  <div class="card">
+    <h2>Deskripsi</h2>
+    <p class="description">
+      Aplikasi ini adalah alat bantu deteksi dini (early detection) yang membantu pencari kerja mengenali indikasi penipuan pada lowongan kerja freelance sebelum melanjutkan proses lamaran. Cukup dengan menyalin teks deskripsi lowongan kerja ke kolom yang tersedia, aplikasi akan menganalisis teks tersebut dan memberikan estimasi apakah lowongan tergolong aman atau patut dicurigai.
+    </p>
+    <div class="quote-box">
+      Bukan pengganti kewaspadaan pribadi — hasil analisis ini adalah bantuan tambahan, bukan keputusan akhir.
+    </div>
+    <p class="description">
+      Di balik layar, aplikasi menggunakan model Machine Learning yang telah dilatih menggunakan ribuan data lowongan kerja nyata, sehingga mampu mengenali pola bahasa yang umum muncul pada lowongan kerja penipuan.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Bagaimana Cara Kerjanya?</h2>
+    <ol class="steps">
+      <li><strong>Masukkan teks lowongan.</strong> Salin judul, deskripsi, atau persyaratan lowongan kerja ke dalam kolom yang tersedia di halaman utama.</li>
+      <li><strong>Pembersihan teks.</strong> Sistem membersihkan teks dari tautan, karakter khusus, dan kata-kata umum yang tidak relevan.</li>
+      <li><strong>Deteksi kata & tautan mencurigakan.</strong> Sistem memindai teks untuk mencari kata kunci seperti "tanpa modal", "gaji besar", atau "deposit", serta tautan yang sering dipakai dalam modus penipuan.</li>
+      <li><strong>Analisis pola bahasa.</strong> Teks yang sudah bersih diubah menjadi representasi numerik (TF-IDF) dan digabung dengan hasil deteksi sebelumnya.</li>
+      <li><strong>Prediksi model.</strong> Model Logistic Regression menghitung probabilitas lowongan tersebut termasuk penipuan, menggunakan ambang batas optimal sebesar 0,60.</li>
+      <li><strong>Hasil ditampilkan.</strong> Sistem menampilkan label "ASLI" atau "PENIPUAN", lengkap dengan persentase keyakinan dan rincian kata kunci yang ditemukan.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>Fitur Utama</h2>
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="icon">⚡</div>
+        <h3>Hasil Instan</h3>
+        <p>Analisis dilakukan secara real-time begitu teks dikirim, tanpa perlu menunggu lama.</p>
+      </div>
+      <div class="feature-item">
+        <div class="icon">🧠</div>
+        <h3>Analisis Hybrid</h3>
+        <p>Menggabungkan Machine Learning (TF-IDF + Logistic Regression) dengan deteksi kata kunci dan tautan mencurigakan.</p>
+      </div>
+      <div class="feature-item">
+        <div class="icon">📊</div>
+        <h3>Skor Probabilitas</h3>
+        <p>Menampilkan persentase keyakinan, bukan sekadar label ya/tidak, agar hasil lebih mudah dipahami.</p>
+      </div>
+      <div class="feature-item">
+        <div class="icon">🚩</div>
+        <h3>Rincian Red Flags</h3>
+        <p>Menunjukkan kata kunci dan tautan mencurigakan spesifik yang ditemukan pada teks yang dimasukkan.</p>
+      </div>
+      <div class="feature-item">
+        <div class="icon">🌐</div>
+        <h3>Berbasis Web</h3>
+        <p>Dapat diakses langsung lewat browser tanpa perlu instalasi aplikasi tambahan.</p>
+      </div>
+      <div class="feature-item">
+        <div class="icon">🇮🇩</div>
+        <h3>Dwibahasa</h3>
+        <p>Mengenali pola kata mencurigakan baik dalam Bahasa Indonesia maupun Bahasa Inggris.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Teknologi yang Digunakan</h2>
+    <div class="tech-tags">
+      <span class="tech-tag">Python</span>
+      <span class="tech-tag">Flask</span>
+      <span class="tech-tag">Scikit-learn</span>
+      <span class="tech-tag">Logistic Regression</span>
+      <span class="tech-tag">TF-IDF</span>
+      <span class="tech-tag">NLTK</span>
+      <span class="tech-tag">Pandas</span>
+      <span class="tech-tag">NumPy</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Batasan Aplikasi</h2>
+    <div class="disclaimer">
+      ⚠️ Aplikasi ini hanya menganalisis teks yang dimasukkan pengguna dan tidak melakukan pengecekan legalitas perusahaan secara langsung ke instansi terkait. Hasil analisis bersifat estimasi awal (early detection), bukan penentu akhir keabsahan suatu lowongan kerja. Tetap gunakan kewaspadaan pribadi sebelum melanjutkan proses lamaran.
+    </div>
+  </div>
+</main>
+
+<footer>
+  Dikembangkan sebagai Penulisan Ilmiah — Universitas Gunadarma
+</footer>
+
+</body>
+</html>

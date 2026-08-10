@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Deteksi Penipuan Lowongan Kerja</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f172a; 
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: linear-gradient(135deg, #1e3a5f, #0f172a);
+      padding: 2rem 1rem;
+      text-align: center;
+      border-bottom: 1px solid #1e40af33;
+    }
+    header h1 { 
+      font-size: 2rem; 
+      color: #60a5fa; 
+      margin-bottom: 0.4rem;
+    }
+    header p { color: #94a3b8; font-size: 1.1rem; }
+    
+    /* Style untuk Menu Navigasi */
+    .nav-menu {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    .nav-link {
+      color: #94a3b8;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+    .nav-link.active, .nav-link:hover {
+      color: #60a5fa;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #1e40af;
+      color: #93c5fd;
+      font-size: 0.9rem;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      margin-top: 0.8rem;
+    }
+
+    main { 
+      flex: 1; 
+      max-width: 900px; 
+      width: 100%; 
+      margin: 3rem auto; 
+      padding: 0 1.5rem; 
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    textarea {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #475569;
+      border-radius: 12px;
+      color: #e2e8f0;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      padding: 1.2rem;
+      min-height: 220px;
+      resize: vertical;
+    }
+    textarea:focus { border-color: #3b82f6; outline: none; }
+
+    .btn-row { 
+      display: flex; 
+      gap: 1rem; 
+      margin-top: 1.5rem; 
+    }
+    button {
+      padding: 0.9rem 2rem;
+      border-radius: 10px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+      flex: 1;
+    }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid #64748b;
+      color: #cbd5e1;
+    }
+
+    #loading { 
+      display: none; 
+      align-items: center; 
+      gap: 0.8rem; 
+      color: #94a3b8; 
+      margin-top: 1rem; 
+      font-size: 1rem;
+    }
+    .spinner {
+      width: 22px; height: 22px;
+      border: 3px solid #334155;
+      border-top-color: #60a5fa;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #result { display: none; margin-top: 2rem; }
+    
+    .verdict-badge {
+      padding: 0.8rem 1.8rem;
+      border-radius: 12px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .verdict-badge.fraud { background: #7f1d1d; color: #fca5a5; }
+    .verdict-badge.safe { background: #166534; color: #86efac; }
+
+    .prob-track {
+      background: #0f172a;
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 0.6rem 0;
+    }
+    .prob-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.8s ease;
+    }
+    .prob-fill.fraud { background: linear-gradient(90deg, #ef4444, #f97316); }
+    .prob-fill.safe  { background: linear-gradient(90deg, #22c55e, #4ade80); }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.2rem;
+      margin: 1.5rem 0;
+    }
+    .metric-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.8rem;
+    }
+    .tag {
+      font-size: 0.9rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+    }
+    .tag.flag { background: #991b1b; color: #fda4af; }
+    .tag.link { background: #9a3412; color: #fdba74; }
+    .tag.none { background: #1e293b; color: #64748b; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🔍 Deteksi Penipuan Lowongan Kerja</h1>
+  <p>Masukkan deskripsi lowongan untuk dianalisis</p>
+  <nav class="nav-menu">
+    <a href="/" class="nav-link active">Home</a>
+    <a href="/about" class="nav-link">About</a>
+  </nav>
+  <span class="badge">Logistic Regression + TF-IDF + Red Flags</span>
+</header>
+
+<main>
+  <div class="card">
+    <textarea id="inputText" placeholder="Tempel deskripsi lowongan kerja di sini..."></textarea>
+    
+    <div class="btn-row">
+      <button class="btn-primary" onclick="deteksi()">🔍 Deteksi Sekarang</button>
+      <button class="btn-ghost" onclick="reset()">Reset</button>
+    </div>
+
+    <div id="loading">
+      <div class="spinner"></div>
+      <span>Menganalisis teks lowongan...</span>
+    </div>
+  </div>
+
+  <div class="card" id="result">
+    <div class="verdict-badge" id="verdictBadge"></div>
+
+    <div style="margin-top:1.5rem">
+      <div>Probabilitas Penipuan</div>
+      <div class="prob-track"><div class="prob-fill fraud" id="probFraudBar"></div></div>
+      <div style="text-align:right; font-weight:600;" id="probFraudVal"></div>
+    </div>
+
+    <div style="margin-top:1rem">
+      <div>Probabilitas Asli</div>
+      <div class="prob-track"><div class="prob-fill safe" id="probSafeBar"></div></div>
+      <div style="text-align:right; font-weight:600;" id="probSafeVal"></div>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-box">
+        <div>Red Flags</div>
+        <div style="font-size:2rem; font-weight:700;" id="rfCount">0</div>
+      </div>
+      <div class="metric-box">
+        <div>Link Curiga</div>
+        <div style="font-size:2rem; font-weight:700;" id="linkCount">0</div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem">
+      <div class="tag-list" id="flagList"></div>
+    </div>
+    <div style="margin-top:1rem">
+      <div class="tag-list" id="linkList"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+  async function deteksi() {
+    const text = document.getElementById('inputText').value.trim();
+    if (!text) return alert("Masukkan deskripsi lowongan!");
+
+    document.getElementById('loading').style.display = 'flex';
+    document.getElementById('result').style.display = 'none';
+
+    try {
+      const res = await fetch('/predict', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ text })
+      });
+      const d = await res.json();
+
+      const isFraud = d.kode_label === 1;
+      const badge = document.getElementById('verdictBadge');
+      badge.className = `verdict-badge ${isFraud ? 'fraud' : 'safe'}`;
+      badge.innerHTML = isFraud ? '⚠️ Potensi Penipuan' : '✅ Lowongan Asli';
+
+      document.getElementById('probFraudBar').style.width = d.proba_fraud + '%';
+      document.getElementById('probFraudVal').textContent = d.proba_fraud + '%';
+      document.getElementById('probSafeBar').style.width = d.proba_asli + '%';
+      document.getElementById('probSafeVal').textContent = d.proba_asli + '%';
+
+      document.getElementById('rfCount').textContent = d.rf_count;
+      document.getElementById('linkCount').textContent = d.links.length;
+
+      document.getElementById('flagList').innerHTML = d.flags.length 
+        ? d.flags.map(f => `<span class="tag flag">🚩 ${f}</span>`).join('')
+        : '<span class="tag none">Tidak ada red flags</span>';
+
+      document.getElementById('linkList').innerHTML = d.links.length 
+        ? d.links.map(l => `<span class="tag link">🔗 ${l}</span>`).join('')
+        : '<span class="tag none">Tidak ada link mencurigakan</span>';
+
+      document.getElementById('result').style.display = 'block';
+    } catch(e) {
+      alert("Gagal terhubung ke server");
+    } finally {
+      document.getElementById('loading').style.display = 'none';
+    }
+  }
+
+  function reset() {
+    document.getElementById('inputText').value = '';
+    document.getElementById('result').style.display = 'none';
+  }
+</script>
+</body>
+</html>
